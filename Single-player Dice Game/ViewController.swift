@@ -11,44 +11,73 @@ import UIKit
 class ViewController: UIViewController {
    
   
-    @IBOutlet weak var singleDice: UIImageView!
-    @IBOutlet weak var message: UILabel!
-    
-    @IBOutlet weak var currScore: UILabel!
+    @IBOutlet weak var singleRollDie: UIButton!
+    @IBOutlet weak var singleDieImage: UIImageView!
+    @IBOutlet weak var currentScoreText: UILabel!
+    @IBOutlet weak var messageText: UILabel!
+    @IBOutlet weak var singleResetButton: UIButton!
     
     var allDice = [#imageLiteral(resourceName: "dice1"),#imageLiteral(resourceName: "dice2"),#imageLiteral(resourceName: "dice3"),#imageLiteral(resourceName: "dice4"),#imageLiteral(resourceName: "dice5"),#imageLiteral(resourceName: "dice6")]
+    var isGamePlaying: Bool = true
     var rand: Int = 0
     var totalScore: Int = 0
     override func viewDidLoad() {
         super.viewDidLoad()
+        singleResetButton.isHidden = true
+        messageText.isHidden = true
+        singleDieImage.isHidden = true
         
         // Do any additional setup after loading the view, typically from a nib.
     }
     
     override func motionEnded(_ motion: UIEvent.EventSubtype, with event: UIEvent?) {
-        message.text = ""
+        if (isGamePlaying) {singleRollDieFunc()}
+        else {singleResetFunc()}
+    }
+    
+    
+    
+    func singleRollDieFunc() {
+        messageText.isHidden = true
         rand = Int.random(in: 0 ... 5)
-        singleDice.image = allDice[rand]
+        singleDieImage.isHidden = false
+        singleDieImage.image = allDice[rand]
         totalScore +=  rand + 1
         if (rand == 0) {
-            message.text = "You rolled a one! You lose!"
+            messageText.isHidden = false
+            messageText.text = "You rolled a one! You lose!"
             totalScore = 0
+            isGamePlaying = false
+            singleRollDie.isHidden = true
         }
         else if (totalScore >= 21) {
-            message.text = "You got to 21! You win!"
+            messageText.isHidden = false
+            messageText.text = "You got to 21! You win!"
+            isGamePlaying = false
+            singleRollDie.isHidden = true
         }
-        currScore.text = "\(totalScore)"
+        currentScoreText.text = "\(totalScore)"
+        singleResetButton.isHidden = false
     }
     
-//  The following code was from when the die was rolled on a button press.
-//    @IBAction func rollSingleDie(_ sender: Any) {
-//    }
-    
-    @IBAction func resetSingle(_ sender: Any) {
-        message.text = ""
-        singleDice.image = allDice[1]
+    func singleResetFunc() {
+        isGamePlaying = true
+        messageText.text = ""
+        singleDieImage.isHidden = true
+        singleRollDie.isHidden = false
         totalScore = 0
-        currScore.text = "0"
+        currentScoreText.text = "0"
+        singleResetButton.isHidden = true
     }
+    
+    @IBAction func singleRollDie(_ sender: Any) {
+        if (isGamePlaying) {singleRollDieFunc()}
+    }
+    
+    @IBAction func singleReset(_ sender: Any) {
+        singleResetFunc()
+    }
+    
+    
 }
 
